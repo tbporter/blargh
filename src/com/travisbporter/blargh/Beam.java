@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 
@@ -23,6 +24,7 @@ public class Beam extends Activity implements CreateNdefMessageCallback {
     NfcAdapter _nfc;
     TextView _textView;
     Button _send;
+    Button _recv;
     Activity _activity;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,9 @@ public class Beam extends Activity implements CreateNdefMessageCallback {
         
         _send = (Button) findViewById(R.id.button_beam_send);
         _send.setOnClickListener(_sendListener);
+        
+        _recv = (Button) findViewById(R.id.button_beam_recv);
+        _recv.setOnClickListener(_recvListener);
     }
 
     @Override
@@ -68,8 +73,17 @@ public class Beam extends Activity implements CreateNdefMessageCallback {
         // only one message sent during the beam
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
-        _textView.setText(new String(msg.getRecords()[0].getPayload()));
+        try {
+			_textView.setText(Crypt.byteToString(msg.getRecords()[0].getPayload()));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
+        /*Intent returnIntent = new Intent();
+        returnIntent.putExtra("result",msg.getRecords()[0].getPayload().toString());
+        setResult(1337,intent);     
+        finish();*/
     }
     
     private OnClickListener _sendListener = new OnClickListener(){
@@ -81,14 +95,18 @@ public class Beam extends Activity implements CreateNdefMessageCallback {
 		}
 		
 	};
-
+	
+    private OnClickListener _recvListener = new OnClickListener(){
+		@Override
+		public void onClick(View v) {
+			_nfc.setNdefPushMessage(null, _activity);
+		}
+		
+	};
+	
 	@Override
 	public NdefMessage createNdefMessage(NfcEvent event) {
-        String text = ("Beam me up, Android!\n\n" +
-	
-                "Beam Time: " + System.currentTimeMillis());
-        
-        NdefMessage msg = new NdefMessage(NdefRecord.createMime( "application/com.travisbporter.blargh", text.getBytes()));
+        NdefMessage msg = new NdefMessage(NdefRecord.createMime( "application/com.travisbporter.blargh",getIntent().getByteArrayExtra("payload")));
         return msg;
 	}
 }

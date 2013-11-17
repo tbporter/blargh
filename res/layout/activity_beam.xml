@@ -13,6 +13,13 @@
     <TextView
         android:id="@+id/tv_beam_rcv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_weight="0.06" />
+
+    <Button
+        android:id="@+id/button_beam_recv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Recv" />
 
 </LinearLayout>

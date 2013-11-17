@@ -1,5 +1,6 @@
 package com.travisbporter.blargh;
 
+import java.io.UnsupportedEncodingException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class KeyFragment extends Fragment {
 	
@@ -43,6 +45,14 @@ public class KeyFragment extends Fragment {
 		_beam.setOnClickListener(_beamListener);
 	}
 	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		if(resultCode == 1337 && data != null){
+			String result=data.getStringExtra("result");
+			Toast.makeText(getActivity(), result, Toast.LENGTH_LONG).show();
+		}
+	}
+	
 	private OnClickListener _genKeyListener = new OnClickListener(){
 		@Override
 		public void onClick(View v) {
@@ -60,8 +70,9 @@ public class KeyFragment extends Fragment {
 	private OnClickListener _beamListener = new OnClickListener(){
 		@Override
 		public void onClick(View v) {
-			Intent i = new Intent(_activity, Beam.class);;
-			startActivity(i);
+			Intent i = new Intent(_activity, Beam.class);
+			i.putExtra("payload",Crypt._keyPair.getPublic().getEncoded());
+			startActivityForResult(i, 1);
 		}
 		
 	};

@@ -12,13 +12,13 @@
 
     <Button
         android:id="@+id/button_gen"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Gen" />
 
     <Button
         android:id="@+id/button_beam"
-        android:layout_width="wrap_content"
+        android:layout_width="289dp"
         android:layout_height="wrap_content"
         android:text="Beam" />
 
